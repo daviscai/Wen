@@ -1,0 +1,36 @@
+{
+    "name": "Wen",
+    "description": "Wen, an open source application development framework for PHP",
+    "keywords": ["Wen","framework"],
+    "homepage": "http://wen.wenzzz.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wen Team",
+            "email": "caiwxiong@qq.com"
+        }
+    ],
+    "support": {
+        "wiki": "http://wen.wenzzz.com",
+        "source": "http://wen.wenzzz.com"
+    },
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.7.3"
+    },
+    "config": {
+        "vendor-dir": "app/vendor"
+    },
+    "autoload": {
+        "psr-4": {
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "http://packagist.phpcomposer.com"
+        }
+    }
+}
