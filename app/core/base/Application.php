@@ -39,10 +39,14 @@ class Application
 
     public $cache;
 
-	public function __construct()
+    private $enableXHProf = false;
+
+    public function __construct()
     {
         //加载配置文件，默认应用配置
         $this->loadConfig();
+
+        $this->monitorProfilerStart();
 
         //获得当前语言，用于多语言本地化
         $this->loadLanguage();
@@ -63,9 +67,49 @@ class Application
         Wen::setApp($this);
     }
 
+    public function __destruct() {
+
+       $this->monitorProfilerEnd();
+
+    }
+
     public function run()
     {
         $this->runAction();
+    }
+
+    private function monitorProfilerStart()
+    {
+        $config = isset($this->config['xhprof']) ? $this->config['xhprof'] : '';
+        if(isset($config['enable']) && $config['enable'] && extension_loaded('xhprof')) {
+            if(mt_rand(1, $config['requestTimes']) === 1 ){
+                if(isset($config['noBuiltins']) && $config['noBuiltins']){
+                    xhprof_enable(XHPROF_FLAGS_NO_BUILTINS + XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY); 
+                }else{
+                    xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+                }
+                $this->enableXHProf = true;
+            }
+        }
+    }
+
+    private function monitorProfilerEnd()
+    {
+        if($this->enableXHProf) {
+            // stop profiler
+            $xhprofData = xhprof_disable();
+
+            $config = isset($this->config['xhprof']) ? $this->config['xhprof'] : '';
+
+            $fileName = $config['fileDir'] . DS . date('YmdHis').mt_rand(100,10000).'.xhprof';
+            $file = fopen($fileName, 'w');
+            if($file) {
+                fwrite($file, serialize($xhprofData));
+                fclose($file);
+            }else{
+                $this->logger->error('save xhprof result faild');
+            }
+        }
     }
 
     private function loadConfig()
@@ -134,5 +178,7 @@ class Application
             exit;
         }
     }
+
+    
     
 }
