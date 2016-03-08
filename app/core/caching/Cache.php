@@ -2,7 +2,7 @@
 /**
  * Wen, an open source application development framework for PHP
  *
- * @link http://www.wenzzz.com/
+ * @link http://wen.wenzzz.com/
  * @copyright Copyright (c) 2015 Wen
  * @license http://opensource.org/licenses/MIT  MIT License
  */
@@ -13,13 +13,7 @@ namespace app\core\caching;
 use app\core\helpers\StringHelper;
 
 /**
- * Cache is the base class for cache classes supporting different cache storage implementations.
- *
- * A data item can be stored in the cache by calling [[set()]] and be retrieved back
- * later (in the same or different request) by [[get()]]. In both operations,
- * a key identifying the data item is required. An expiration time and/or a [[Dependency|dependency]]
- * can also be specified when calling [[set()]]. If the data item expires or the dependency
- * changes at the time of calling [[get()]], the cache will return no data.
+ * 缓存基类，提供缓存抽象层接口，支持不同的缓存实现，具体的缓存类继承基类，实现依赖倒置，更换底层实现不影响高层业务模块
  *
  * A typical usage pattern of cache is like the following:
  *
@@ -39,7 +33,7 @@ use app\core\helpers\StringHelper;
  * echo $cache['foo'];
  * ```
  *
- * Derived classes should implement the following methods which do the actual cache storage operations:
+ * 具体的缓存实现类应该实现下面的方法：
  *
  * - [[getValue()]]: retrieve the value with a key (if any) from cache
  * - [[setValue()]]: store the value with a key into cache
@@ -47,22 +41,22 @@ use app\core\helpers\StringHelper;
  * - [[deleteValue()]]: delete the value with the specified key from cache
  * - [[flushValues()]]: delete all values from cache
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * 该实现参考自Yii2.0。
+ *
+ * @author WenXiong Cai <caiwxiong@qq.com>
+ * @since 1.0
  */
 abstract class Cache implements \ArrayAccess
 {
     /**
-     * @var string a string prefixed to every cache key so that it is unique globally in the whole cache storage.
-     * It is recommended that you set a unique cache key prefix for each application if the same cache
-     * storage is being used by different applications.
+     * @var string 缓存key前缀，通常用于区分不同的应用或者模块
      *
-     * To ensure interoperability, only alphanumeric characters should be used.
      */
     public $keyPrefix;
+
     /**
-     * @var array|boolean the functions used to serialize and unserialize cached data. Defaults to null, meaning
-     * using the default PHP `serialize()` and `unserialize()` functions. If you want to use some more efficient
+     * @var array|boolean 一个序列化数据的函数，默认为Null，也就是使用默认的PHP `serialize()` and `unserialize()` 函数， 
+     *
      * serializer (e.g. [igbinary](http://pecl.php.net/package/igbinary)), you may configure this property with
      * a two-element array. The first element specifies the serialization function, and the second the deserialization
      * function. If this property is set false, data will be directly sent to and retrieved from the underlying
@@ -116,11 +110,6 @@ abstract class Cache implements \ArrayAccess
         }else{
             return false;
         }
-        // if (is_array($value) && !($value[1] instanceof Dependency && $value[1]->getHasChanged($this))) {
-        //     return $value[0];
-        // } else {
-        //     return false;
-        // }
     }
 
     /**
@@ -174,9 +163,6 @@ abstract class Cache implements \ArrayAccess
                     if (is_array($value)) {
                         $results[$key] = $value[0];
                     }
-                    // if (is_array($value) && !($value[1] instanceof Dependency && $value[1]->getHasChanged($this))) {
-                    //     $results[$key] = $value[0];
-                    // }
                 }
             }
         }

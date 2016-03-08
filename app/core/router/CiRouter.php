@@ -324,7 +324,7 @@ class CiRouter implements RouterInterface
 		}else{
 			$segment[0] = isset($this->routes['default_module']) ? $this->routes['default_module'] : 'def';
 			$segment[1] = isset($this->routes['default_controller']) ? ucfirst($this->routes['default_controller']) : 'app';
-			$segment[2] = 'index';
+			$segment[2] = isset($this->routes['default_action']) ? $this->routes['default_action'] : 'index';
 
 			$this->setRequest($segment);
 		}

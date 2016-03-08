@@ -2,7 +2,7 @@
 /**
  * Wen, an open source application development framework for PHP
  *
- * @link http://www.wenzzz.com/
+ * @link http://wen.wenzzz.com/
  * @copyright Copyright (c) 2015 Wen
  * @license http://opensource.org/licenses/MIT  MIT License
  */
@@ -14,60 +14,35 @@ use Exception;
 use app\core\base\Wen;
 
 /**
- * MemCache implements a cache application component based on [memcache](http://pecl.php.net/package/memcache)
- * and [memcached](http://pecl.php.net/package/memcached).
+ * 基于 [memcache](http://pecl.php.net/package/memcache) 和 [memcached](http://pecl.php.net/package/memcached).
+ * 实现了一个缓存应用组件
  *
- * MemCache supports both [memcache](http://pecl.php.net/package/memcache) and
- * [memcached](http://pecl.php.net/package/memcached). By setting [[useMemcached]] to be true or false,
- * one can let MemCache to use either memcached or memcache, respectively.
+ * MemCache同时支持 memcache 和 memcached ，在配置里设置 [[useMemcached]] 为true或者false即可
  *
- * MemCache can be configured with a list of memcache servers by settings its [[servers]] property.
- * By default, MemCache assumes there is a memcache server running on localhost at port 11211.
- *
- * See [[Cache]] for common cache operations that MemCache supports.
- *
- * Note, there is no security measure to protected data in memcache.
- * All data in memcache can be accessed by any process running in the system.
- *
- * To use MemCache as the cache application component, configure the application as follows,
+ * 具体的cache配置如下
  *
  * ```php
- * [
- *     'components' => [
- *         'cache' => [
- *             'class' => 'yii\caching\MemCache',
- *             'servers' => [
- *                 [
- *                     'host' => 'server1',
- *                     'port' => 11211,
- *                     'weight' => 60,
- *                 ],
- *                 [
- *                     'host' => 'server2',
- *                     'port' => 11211,
- *                     'weight' => 40,
- *                 ],
- *             ],
- *         ],
- *     ],
- * ]
+ * 'cache' => [
+ *      'class' => 'app\core\caching\MemCache', //缓存实现类
+ *      'useMemcached'=>true, //推荐, memcached客户端已实现一致性Hash
+ *      'servers' => [
+ *          ['host' => 'localhost', 'port' => 11211, 'weight' => 60 ],
+ *          ['host' => 'localhost', 'port' => 11212, 'weight' => 60 ],
+ *      ],
+ * ],
  * ```
  *
- * In the above, two memcache servers are used: server1 and server2. You can configure more properties of
- * each server, such as `persistent`, `weight`, `timeout`. Please see [[MemCacheServer]] for available options.
+ * 每个server还可以设置其他属性，比如超时`timeout`, `persistent`等，可以参看 [[MemCacheServer]]
  *
- * @property \Memcache|\Memcached $memcache The memcache (or memcached) object used by this cache component.
- * This property is read-only.
- * @property MemCacheServer[] $servers List of memcache server configurations. Note that the type of this
- * property differs in getter and setter. See [[getServers()]] and [[setServers()]] for details.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * memcached php扩展已支持一致性哈希，而memcaceh支持一致性哈希需要修改php.ini配置：
  * 
- * memcache使用一致性hash算法在php.ini中加
- * 复制代码 代码如下:
  * Memcache.hash_strategy =consistent
  * Memcache.hash_function =crc32
+ *
+ * 该实现参考自Yii2.0。
+ *
+ * @author WenXiong Cai <caiwxiong@qq.com>
+ * @since 1.0
  *
  */
 class MemCache extends Cache
