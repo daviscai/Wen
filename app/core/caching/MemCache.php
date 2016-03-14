@@ -10,6 +10,7 @@
 
 namespace app\core\caching;
 
+use app\core\base\Wen;
 use Exception;
 use app\core\base\Wen;
 
@@ -91,6 +92,7 @@ class MemCache extends Cache
      * @var \Memcache|\Memcached the Memcache instance
      */
     private $_cache;
+
     /**
      * @var array list of memcache server configurations
      */
@@ -106,18 +108,20 @@ class MemCache extends Cache
     }
 
     /**
-     * Initializes this application component.
-     * It creates the memcache instance and adds memcache servers.
+     * 初始化缓存组件
+     * 
      */
     public function init()
     {
+        //根据配置servers，创建MemCacheServer实例对象，并保存到$_servers
         $this->setServers($this->servers);
 
+        //添加缓存节点到缓存池里
         $this->addServers($this->getMemcache(), $this->getServers());
     }
 
     /**
-     * Add servers to the server pool of the cache specified
+     * 添加缓存节点到缓存池里
      *
      * @param \Memcache|\Memcached $cache
      * @param MemCacheServer[] $servers
@@ -127,14 +131,10 @@ class MemCache extends Cache
     {
         if (empty($servers)) {
             return false;
-            // $servers = [new MemCacheServer([
-            //     'host' => '127.0.0.1',
-            //     'port' => 11211,
-            // ])];
         } else {
             foreach ($servers as $server) {
                 if ($server->host === null) {
-                    throw new Exception("The 'host' property must be specified for every memcache server.");
+                    throw new Exception(Wen::t('The host property must be specified for every memcache server'));
                 }
             }
         }
@@ -163,7 +163,6 @@ class MemCache extends Cache
         $serversArr = array();
         foreach ($servers as $server) {
             if (empty($existingServers) || !isset($existingServers[$server->host . ':' . $server->port])) {
-                //$cache->addServer($server->host, $server->port, $server->weight);
                 $serversArr[] = array($server->host, $server->port, $server->weight);
             }
         }
@@ -224,7 +223,7 @@ class MemCache extends Cache
         if ($this->_cache === null) {
             $extension = $this->useMemcached ? 'memcached' : 'memcache';
             if (!extension_loaded($extension)) {
-                throw new Exception("MemCache requires PHP $extension extension to be loaded.");
+                throw new Exception(Wen::t('MemCache requires PHP extension to be loaded',['extension'=>$extension]));
             }
 
             if ($this->useMemcached) {

@@ -2,7 +2,7 @@
 /**
  * Wen, an open source application development framework for PHP
  *
- * @link http://www.wenzzz.com/
+ * @link http://wen.wenzzz.com/
  * @copyright Copyright (c) 2015 Wen
  * @license http://opensource.org/licenses/MIT  MIT License
  */
@@ -16,66 +16,145 @@ use app\core\db\DBConnection;
 
 
 /**
- * 多国语言国际化服务提供者，统一接口，通过set方法实例化具体的实现类，实现依赖注入
+ * 数据读写操作基类，实现读写分离，提供链式操作数据，方便，高效。
  * 
- * 这样做的好处：解耦，高层业务不依赖底层实现
+ * 通过预编译方式绑定数据，防止SQL注入。
+ * 
+ * 支持数据库分布式集群部署，对失效节点自动转移，提高系统可用性，具体实现参考 app\core\db\DBConnection
+ * 
+ * ```php
+ * $db = Wen::app()->db;
+ * 
+ * $rs = $db->selectOne('u.id')->from('t_userinfo','u')->limit(0,10)->execute();
+ * $rs = $db->select('u.id,u.name')->from('t_userinfo','u')->limit(0,2)->execute();
+ * $rs = $db->selectCount('u.id')->from('t_userinfo','u')->where('u.id=:id',array(':id'=>101))->execute();
+ * 
+ * $rs = $db->selectOne('u.id,u.name')->from('t_userinfo','u')->where('u.id=:id',array(':id'=>10001))->groupby('u.id')->execute();
+ * $rs = $db->select('u.id,u.name')->from('t_userinfo','u')->where('u.id=:id',array(':id'=>10001))->groupby('u.id')->execute();
+ * 
+ * $p=' and 0<>(select count(*) from admin)  '; //sql注入语句失效，预编译防止注入
+ * $rs = $db->select('u.id,u.name')->from('t_userinfo','u')->where('u.name=:name',array(':name'=>$p))->execute();
+ * 
+ * $rs = $db->select()->from('pk_blog_post','u')->leftJoin('Phone','p','u.id = p.user_id')->where('u.id>:id',array(':id'=>1))->limit(0,10)->groupby('u.id')->execute();
  *
+ * $rs = $db->insert('pk_blog_post',
+ *          array('user_id'=>5,'title'=>'ssss','slug'=>10,'status'=>1,'modified'=>date('y-m-d'),'content'=>'rrr','excerpt'=>'pp','comment_status'=>1,'comment_count'=>2)
+ *       )->execute();
+ *
+ * $rs = $db->update('pk_blog_post',array('title'=>'mmmm'))->where('id=:id',array(':id'=>5))->execute();
+ * 
+ * $rs = $db->delete('pk_blog_post')->where('id=:id',array(':id'=>3))->execute();
+ *
+ * ```
  *
  * @author WenXiong Cai <caiwxiong@qq.com>
  * @since 1.0
  */
 class DB
 {
-    
-    public $db;
-
-    public $pdo;
-
+    /**
+     * @var DBConnection 数据库连接对象
+     */
     private $connect;
 
+    /**
+     * @var string 查询sql语句
+     */
     private $selectSql;
 
+    /**
+     * @var string 查询表
+     */
     private $fromTable;
 
+    /**
+     * @var array 左连表，多表查询
+     */
     private $leftJoin = [];
 
+    /**
+     * @var string where条件语句
+     */
     private $where;
 
+    /**
+     * @var array where条件参数
+     */
     private $whereParam = [];
 
+    /**
+     * @var string limit语句
+     */
     private $limit;
 
+    /**
+     * @var string order by 语句
+     */
     private $orderBy;
 
+    /**
+     * @var string group by 语句
+     */
     private $groupBy;
 
+    /**
+     * @var boolean 是否只查询一条数据
+     */
     private $isFetchOne = false;
 
+    /**
+     * @var boolean 是否为count操作, 当$db->selectCount()时会被设置为true
+     */
     private $isCount = false;
 
+    /**
+     * @var boolean 是否为update操作, 当$db->update()时会被设置为true
+     */
     private $isUpdate = false;
 
+    /**
+     * @var boolean 是否为insert操作, 当$db->insert()时会被设置为true
+     */
     private $isInsert = false;
 
+    /**
+     * @var boolean 是否为delete操作, 当$db->delete()时会被设置为true
+     */
     private $isDelete = false;
 
+    /**
+     * @var string update语句
+     */
     private $updateSql = '';
 
+    /**
+     * @var string update字段数据
+     */
     private $updateFieldData = [];
 
+    /**
+     * @var string insert语句
+     */
     private $insertSql = '';
 
+    /**
+     * @var string insert字段数据
+     */
     private $insertFieldData = [];
 
+    /**
+     * @var string delete语句
+     */
     private $deleteSql = '';
 
 
     public function __construct($config)
-    {
+    {   
+        //创建数据库连接对象，构造函数仅仅是初始化数据库相关属性，并没有创建连接，只有在执行具体读写操作时，才会创建连接
         $this->connect = new DBConnection($config);
-        $this->connect->open();
 
-        //$this->pdo = $this->connect->getMasterPdo();
+        //创建数据库连接
+        //$this->connect->open();
     } 
  
     public function select($str='')
@@ -94,7 +173,7 @@ class DB
         return $this;
     }
 
-    public function selectCount()
+    public function selectCount($str='')
     {
         $this->select($str);
         $this->isCount = true;
@@ -252,7 +331,6 @@ class DB
             $pdo->rollBack();
             $this->clearParameters();
             return false;
-            //throw $e;
         }
     }
 
@@ -280,7 +358,6 @@ class DB
             $pdo->rollBack();
             $this->clearParameters();
             return false;
-            //throw $e;
         }
     }
 
