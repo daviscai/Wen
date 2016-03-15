@@ -50,7 +50,7 @@ class RouterProvider
         $routerClass = $router['class'];
         
         if(!class_exists($routerClass)) {
-            throw new Exception( Wen::('cannot create router instance',['class'=>$routerClass]), 500);
+            throw new Exception( Wen::t('cannot create router instance',['class'=>$routerClass]), 500);
         }
 
         $configFile = isset($router['configFile']) ? ROOT . DS . $router['configFile'] : '';

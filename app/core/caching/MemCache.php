@@ -10,7 +10,6 @@
 
 namespace app\core\caching;
 
-use app\core\base\Wen;
 use Exception;
 use app\core\base\Wen;
 

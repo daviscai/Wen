@@ -103,8 +103,6 @@ class Di
                 $dependencies[$index] = $param;
             }
         }
-
-        $dependencies = $this->resolveDependencies($dependencies, $reflection);
         
         if (empty($config)) {
             return $reflection->newInstanceArgs($dependencies);
@@ -150,26 +148,5 @@ class Di
         $this->_dependencies[$class] = $dependencies;
 
         return [$reflection, $dependencies];
-    }
-
-    /**
-     * Resolves dependencies by replacing them with the actual object instances.
-     * @param array $dependencies the dependencies
-     * @param ReflectionClass $reflection the class reflection associated with the dependencies
-     * @return array the resolved dependencies
-     * @throws Exception if a dependency cannot be resolved or if a dependency cannot be fulfilled.
-     */
-    protected function resolveDependencies($dependencies, $reflection = null)
-    {
-        foreach ($dependencies as $index => $dependency) {
-            if ($dependency->id !== null) {
-                $dependencies[$index] = $this->get($dependency->id);
-            } elseif ($reflection !== null) {
-                $name = $reflection->getConstructor()->getParameters()[$index]->getName();
-                $class = $reflection->getName();
-                throw new Exception( Wen::t('Missing required parameter when instantiating class', ['class'=>$class,'name'=>$name]) );
-            }
-        }
-        return $dependencies;
     }
 }

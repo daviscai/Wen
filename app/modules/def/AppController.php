@@ -26,23 +26,22 @@ class AppController extends CoreController
 		//$app->logger->error('msg','test');
 		//var_dump($app);
 
-		//$t = Wen::t('test error',['abc'=>'999','user'=>'是是是']);
-		//var_dump($t);
+		// $t = Wen::t('test error',['abc'=>'999','user'=>'是是是']);
+		// var_dump($t);
 
-		//$a = StringHelper::starReplace('rrsdljslasffs');
-		//var_dump($a);
+		// $a = StringHelper::starReplace('rrsdljslasffs');
+		// var_dump($a);
 
-		//$a = HttpHelper::v('t');
-		//var_dump($a);
-		//$this->doctrineDBAL();
+		// $a = HttpHelper::v('t');
+		// var_dump($a);
+		
+		$this->wenDb();
 
-		//$this->wenDb();
+		// $this->cacheTest();
 
-		//$this->cacheTest();
+		// $data = array('a'=>'ttt');
 
-		$data = array('a'=>'ttt');
-
-		$this->render('post/list.html', $data);
+		// $this->render('post/list.html', $data);
 
 	}
 
@@ -50,18 +49,34 @@ class AppController extends CoreController
 	{
 		$cache = Wen::app()->cache;
 
-		$cache->set('t','ggss');
-		$rs = $cache->get('t');
-		var_dump($rs);
+		if($cache){
+			$cache->set('t','ggsss4');
+			$rs = $cache->get('t');
+			var_dump($rs);
+		}
 	}
 
 	private function  wenDb()
 	{
 		$db = Wen::app()->db;
-		//var_dump($db);
-		//$rs = $db->selectOne('u.id')->from('t_userinfo','u')->limit(0,10)->execute();
-		//$rs = $db->select('u.id,u.name')->from('t_userinfo','u')->limit(0,2)->execute();
-		//$rs = $db->selectCount('u.id')->from('t_userinfo','u')->where('u.id=:id',array(':id'=>101))->execute();
+		
+		//$rs = $db->insert('t_userinfo', array('name'=>'davis','title'=>'ssss','status'=>1))->execute();
+
+		//$rs = $db->select('u.id, u.name, u.title')->from('t_userinfo','u')->limit(0,10)->execute();
+		//$rs = $db->select('id, name, title')->from('t_userinfo')->limit(0,10)->execute();
+		
+		// $rs = $db->selectCount('u.id')->from('t_userinfo','u')->where('u.id=:id',array(':id'=>4))->execute();
+		// var_dump($rs);
+
+		// $rs = $db->selectCount('u.id')->from('t_userinfo','u')->where('u.status=:status',array(':status'=>1))->execute();
+		// var_dump($rs);
+		
+		// $rs = $db->selectOne('id, name, title')->from('t_userinfo')->where('status=:status',array(':status'=>1))->execute();
+		// var_dump($rs);
+
+
+
+
 		
 		//$rs = $db->selectOne('u.id,u.name')->from('t_userinfo','u')
 			//->where('u.id=:id',array(':id'=>10001))->groupby('u.id')->execute();
@@ -88,35 +103,6 @@ class AppController extends CoreController
 		//var_dump($rs);
 	}
 
-	private function doctrineDBAL()
-	{
-		$config = new \Doctrine\DBAL\Configuration();
-		//..
-		$connectionParams = array(
-		    'dbname' => 'dev_meituhd',
-		    'user' => 'root',
-		    'password' => 'cai1774',
-		    'host' => 'localhost',
-		    'driver' => 'pdo_mysql',
-		);
-		$conn = DriverManager::getConnection($connectionParams, $config);
-
-		$articles = $conn->fetchAll('select * from t_userinfo');
-		var_dump($articles);
-		//$count = $conn->executeUpdate('UPDATE user SET username = ? WHERE id = ?', array('jwage', 1));
-
-		//$conn->insert('user', array('username' => 'jwage'));
-
-		//$conn->update('user', array('username' => 'jwage'), array('id' => 1));
-
-		// $qb = $conn->createQueryBuilder()
-		//     ->select('u.id')
-		//     ->addSelect('p.id')
-		//     ->from('users', 'u')
-		//     ->leftJoin('u', 'phonenumbers', 'u.id = p.user_id');
-
-		// $results = $qb->getQuery()->execute();
-	}
 
 	public function page404()
 	{
