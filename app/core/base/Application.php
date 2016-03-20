@@ -3,7 +3,7 @@
  * Wen, an open source application development framework for PHP
  *
  * @link http://wen.wenzzz.com/
- * @copyright Copyright (c) 2015 Wen
+ * @copyright Copyright (c) 2016 Wen
  * @license http://opensource.org/licenses/MIT  MIT License
  */
 
@@ -72,10 +72,10 @@ class Application
     private $enableXHProf = false;
 
 
-	public function __construct()
+	public function __construct($config='')
     {
         //加载配置文件，默认应用配置
-        $this->loadConfig();
+        $this->loadConfig($config);
 
         $this->monitorProfilerStart();
 
@@ -180,9 +180,20 @@ class Application
      * 加载配置文件
      *
      */
-    private function loadConfig()
-    {
-        $this->config = require_once APP_ROOT . DS . 'config' . DS . 'app.config';
+    private function loadConfig($configFile='')
+    {   
+        if($configFile) {
+            $file = $configFile;
+        }else{
+            $file = APP_ROOT . DS . 'config' . DS . 'app.config';
+        }
+        
+        if(file_exists($file)) {
+            $this->config = require_once $file;
+        }else{
+            throw new Exception('App base config file not exists:'.$file, 500);
+        }
+        
     }
 
     /**

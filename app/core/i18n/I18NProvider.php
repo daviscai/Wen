@@ -3,7 +3,7 @@
  * Wen, an open source application development framework for PHP
  *
  * @link http://wen.wenzzz.com/
- * @copyright Copyright (c) 2015 Wen
+ * @copyright Copyright (c) 2016 Wen
  * @license http://opensource.org/licenses/MIT	MIT License
  */
 
@@ -36,7 +36,6 @@ class I18NProvider
     public function __construct($config)
     {
         $this->set($config);
-
         $this->setLanguage($config);
     }   
 
@@ -60,10 +59,10 @@ class I18NProvider
      */
     private function set($config)
     {
-        if(empty($config) || empty($config['class'])  ) {
+        if(empty($config) || empty($config['class'])) {
             throw new Exception( Wen::t('cannot find i18n class'), 500);
         }
-
+        
         $cls = $config['class'];
         
         if(!class_exists($cls)) {

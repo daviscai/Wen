@@ -3,7 +3,7 @@
  * Wen, an open source application development framework for PHP
  *
  * @link http://wen.wenzzz.com/
- * @copyright Copyright (c) 2015 Wen
+ * @copyright Copyright (c) 2016 Wen
  * @license http://opensource.org/licenses/MIT  MIT License
  */
 

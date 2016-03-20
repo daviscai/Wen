@@ -3,13 +3,14 @@
  * Wen, an open source application development framework for PHP
  *
  * @link http://wen.wenzzz.com/
- * @copyright Copyright (c) 2015 Wen
+ * @copyright Copyright (c) 2016 Wen
  * @license http://opensource.org/licenses/MIT	MIT License
  */
 
 namespace app\core\router;
 
 use Exception;
+use app\core\base\Wen;
 
 /**
  * 路由器服务提供者，统一接口，通过setRouter方法实例化具体的路由器，实现依赖注入

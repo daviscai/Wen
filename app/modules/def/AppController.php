@@ -2,8 +2,8 @@
 /**
  * Wen, an open source application development framework for PHP
  *
- * @link http://www.wenzzz.com/
- * @copyright Copyright (c) 2015 Wen
+ * @link http://wen.wenzzz.com/
+ * @copyright Copyright (c) 2016 Wen
  * @license http://opensource.org/licenses/MIT	MIT License
  */
 
@@ -14,8 +14,6 @@ use app\core\controller\CoreController;
 use app\core\helpers\StringHelper;
 use app\core\helpers\HttpHelper;
 use app\core\helpers\ArrayHelper;
-
-use Doctrine\DBAL\DriverManager;
 
 class AppController extends CoreController
 {
@@ -35,7 +33,7 @@ class AppController extends CoreController
 		// $a = HttpHelper::v('t');
 		// var_dump($a);
 		
-		$this->wenDb();
+		//$this->wenDb();
 
 		// $this->cacheTest();
 
@@ -66,7 +64,7 @@ class AppController extends CoreController
 		//$rs = $db->select('id, name, title')->from('t_userinfo')->limit(0,10)->execute();
 		
 		// $rs = $db->selectCount('u.id')->from('t_userinfo','u')->where('u.id=:id',array(':id'=>4))->execute();
-		// var_dump($rs);
+		//var_dump($rs);
 
 		// $rs = $db->selectCount('u.id')->from('t_userinfo','u')->where('u.status=:status',array(':status'=>1))->execute();
 		// var_dump($rs);
@@ -74,32 +72,15 @@ class AppController extends CoreController
 		// $rs = $db->selectOne('id, name, title')->from('t_userinfo')->where('status=:status',array(':status'=>1))->execute();
 		// var_dump($rs);
 
+		// $p = ' and 0<>(select count(*) from admin)  '; //sql注入语句失效，预编译防止注入
+		// $rs = $db->select('u.id, u.name')->from('t_userinfo','u')->where('u.name=:name',array(':name'=>$p))->execute();
+		// var_dump($rs);
 
 
+		// $rs = $db->update('t_userinfo',array('title'=>'mmmm'))->where('id=:id',array(':id'=>5))->execute();
+		// var_dump($rs);
 
-		
-		//$rs = $db->selectOne('u.id,u.name')->from('t_userinfo','u')
-			//->where('u.id=:id',array(':id'=>10001))->groupby('u.id')->execute();
-		//$rs = $db->select('u.id,u.name')->from('t_userinfo','u')
-			//->where('u.id=:id',array(':id'=>10001))->groupby('u.id')->execute();
-
-		// $p=' and 0<>(select count(*) from admin)  '; //sql注入语句失效，预编译防止注入
-		// $rs = $db->select('u.id,u.name')->from('t_userinfo','u')
-		// 	->where('u.name=:name',array(':name'=>$p))->execute();
-		
-		//$rs = $db->select()->from('pk_blog_post','u')->execute();
-		
-		//->leftJoin('Phone','p','u.id = p.user_id')->where('u.id>:id',array(':id'=>1))->limit(0,10)->groupby('u.id')->execute();
-
-		//$rs = $db->insert('pk_blog_post',
-				//array('user_id'=>5,'title'=>'ssss','slug'=>10,'status'=>1,'modified'=>date('y-m-d'),'content'=>'rrr','excerpt'=>'pp','comment_status'=>1,'comment_count'=>2)
-				//)->execute();
-		//var_dump($rs);
-
-		//$rs = $db->update('pk_blog_post',array('title'=>'mmmm'))->where('id=:id',array(':id'=>5))->execute();
-		//var_dump($rs);
-
-		//$rs = $db->delete('pk_blog_post')->where('id=:id',array(':id'=>3))->execute();
+		//$rs = $db->delete('t_userinfo')->where('id=:id',array(':id'=>3))->execute();
 		//var_dump($rs);
 	}
 
