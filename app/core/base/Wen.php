@@ -11,6 +11,7 @@ namespace app\core\base;
 
 use Exception;
 use \app\core\base\Application;
+use \app\core\base\ConsoleApplication;
 use \app\core\base\Di;
 
 /**
@@ -38,12 +39,21 @@ class Wen
     }
 
     /**
+     * 创建\wen\core\base\ConsoleApplication实例
+     *
+     * @return \wen\core\base\ConsoleApplication $app
+     */
+    public static function createConsoleApplication() {
+        return new ConsoleApplication();
+    }
+
+    /**
      * 设置应用实例， 由 \wen\core\base\Application 完成初始化系列准备后调用此方法
      * 
      * @param  $app application
      */
     public static function setApp($app) { 
-        if( $app instanceof Application ) { 
+        if( $app instanceof Application || $app instanceof ConsoleApplication ) { 
             self::$app = $app;   
         } 
     }
